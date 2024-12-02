@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_yasg',
+
     'users',
 ]
 
@@ -75,7 +78,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'modules.system.context_processors.user_info',
             ],
         },
     },
@@ -117,6 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -187,6 +191,7 @@ LOGGING = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -212,18 +217,6 @@ if DEBUG:
 REDIS_HOST = env('REDIS_HOST')
 REDIS_PORT = '6379'
 REDIS_PASSWORD = env("REDIS_PASSWORD")
-
-
-# CELERY settings
-CELERY_BROKER_URL = 'redis://' + ':' + REDIS_PASSWORD + '@' if REDIS_PASSWORD else 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_RESULT_BACKEND = 'redis://' + ':' + REDIS_PASSWORD + '@' if REDIS_PASSWORD else 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_BROKER_TRANSPORT_OPTION = {'visibility_timeout': 3600}
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Moscow'
 
 CACHES = {
     'default': {
